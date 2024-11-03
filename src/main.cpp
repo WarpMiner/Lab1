@@ -194,8 +194,8 @@ void Mprocessing(string& command, string& filename) { // ф-ия обработ�
     }
 }
 
-// Список
-SinglyLinkedList<string> Lreadfile(string& filename, string& name) { // ф-ия чтения списка из файла
+// Сингл лист
+SinglyLinkedList<string> LSreadfile(string& filename, string& name) { // ф-ия чтения списка из файла
     SinglyLinkedList<string> nums;
     string str;
     ifstream fileinput;
@@ -213,9 +213,9 @@ SinglyLinkedList<string> Lreadfile(string& filename, string& name) { // ф-ия 
     fileinput.close();
     return nums;
 }
-void LPUSH(string& name, string& value, string& filename, string check) {
+void LSPUSH(string& name, string& value, string& filename, string check) {
     string textfull = Fulltext(filename, name);
-    SinglyLinkedList<string> nums = Lreadfile(filename, name);
+    SinglyLinkedList<string> nums = LSreadfile(filename, name);
 
     string str;
     if (nums.size != 0) {
@@ -233,9 +233,9 @@ void LPUSH(string& name, string& value, string& filename, string check) {
         writefile(filename, textfull);
     }
 }
-void LPOP(string& name, string& filename, string check) {
+void LSPOP(string& name, string& filename, string check) {
     string textfull = Fulltext(filename, name);
-    SinglyLinkedList<string> nums = Lreadfile(filename, name);
+    SinglyLinkedList<string> nums = LSreadfile(filename, name);
 
     string str;
     if (nums.size != 0) {
@@ -252,9 +252,9 @@ void LPOP(string& name, string& filename, string check) {
         exit(1);
     }
 }
-void LREMOVE(string& name, string& value, string& filename) {
+void LSREMOVE(string& name, string& value, string& filename) {
     string textfull = Fulltext(filename, name);
-    SinglyLinkedList<string> nums = Lreadfile(filename, name);
+    SinglyLinkedList<string> nums = LSreadfile(filename, name);
 
     string str;
     if (nums.size != 0) {
@@ -274,8 +274,8 @@ void LREMOVE(string& name, string& value, string& filename) {
         exit(1);
     }
 }
-void LGET(string& name, string& value, string& filename) {
-    SinglyLinkedList<string> nums = Lreadfile(filename, name);
+void LSGET(string& name, string& value, string& filename) {
+    SinglyLinkedList<string> nums = LSreadfile(filename, name);
 
     string str;
     if (nums.size != 0) {
@@ -289,8 +289,8 @@ void LGET(string& name, string& value, string& filename) {
         exit(1);
     }
 }
-void LPRINT(string& name, string& filename) {
-    SinglyLinkedList<string> nums = Lreadfile(filename, name);
+void LSPRINT(string& name, string& filename) {
+    SinglyLinkedList<string> nums = LSreadfile(filename, name);
 
     string str;
     if (nums.size != 0) {
@@ -300,37 +300,180 @@ void LPRINT(string& name, string& filename) {
         exit(1);
     }
 }
-void Lprocessing(string& command, string& filename) { // ф-ия обработки команд списка
+void LSprocessing(string& command, string& filename) { // ф-ия обработки команд списка
     string name, value;
 
-    if (command.substr(0, 7) == "LPUSHB ") {
-        stringstream stream(command.substr(7));;
-        stream >> name >> value;
-        LPUSH(name, value, filename, "back"); 
-    } else if (command.substr(0, 7) == "LPUSHF ") {
-        stringstream stream(command.substr(7));;
-        stream >> name >> value;
-        LPUSH(name, value, filename, "front");
-    } else if (command.substr(0, 6) == "LPOPB ") {
-        stringstream stream(command.substr(6));;
-        stream >> name;
-        LPOP(name, filename, "back");
-    } else if (command.substr(0, 6) == "LPOPF ") {
-        stringstream stream(command.substr(6));;
-        stream >> name;
-        LPOP(name, filename, "front");
-    } else if (command.substr(0, 8) == "LREMOVE ") {
+    if (command.substr(0, 8) == "LSPUSHB ") {
         stringstream stream(command.substr(8));;
         stream >> name >> value;
-        LREMOVE(name, value, filename);
-    } else if (command.substr(0, 5) == "LGET ") {
-        stringstream stream(command.substr(5));;
+        LSPUSH(name, value, filename, "back"); 
+    } else if (command.substr(0, 8) == "LSPUSHF ") {
+        stringstream stream(command.substr(8));;
         stream >> name >> value;
-        LGET(name, value, filename);
-    } else if (command.substr(0, 7) == "LPRINT ") {
+        LSPUSH(name, value, filename, "front");
+    } else if (command.substr(0, 7) == "LSPOPB ") {
         stringstream stream(command.substr(7));;
         stream >> name;
-        LPRINT(name, filename);
+        LSPOP(name, filename, "back");
+    } else if (command.substr(0, 7) == "LSPOPF ") {
+        stringstream stream(command.substr(7));;
+        stream >> name;
+        LSPOP(name, filename, "front");
+    } else if (command.substr(0, 9) == "LSREMOVE ") {
+        stringstream stream(command.substr(9));;
+        stream >> name >> value;
+        LSREMOVE(name, value, filename);
+    } else if (command.substr(0, 6) == "LSGET ") {
+        stringstream stream(command.substr(6));;
+        stream >> name >> value;
+        LSGET(name, value, filename);
+    } else if (command.substr(0, 8) == "LSPRINT ") {
+        stringstream stream(command.substr(8));;
+        stream >> name;
+        LSPRINT(name, filename);
+    } else {
+        cout << "Ошибка, нет такой команды!" << endl;
+        exit(1); 
+    }
+}
+
+// Дабл лист
+DoublyLinkedList<string> LDreadfile(string& filename, string& name) { // ф-ия чтения списка из файла
+    DoublyLinkedList<string> nums;
+    string str;
+    ifstream fileinput;
+    fileinput.open(filename);
+    while (getline(fileinput, str)) { // добавления значения в массив
+        stringstream ss(str);
+        string token;
+        getline(ss, token, ' ');
+        if (token == name) {
+            while (getline(ss, token, ' ')) {
+                nums.push_back(token);
+            }
+        }
+    }
+    fileinput.close();
+    return nums;
+}
+void LDPUSH(string& name, string& value, string& filename, string check) {
+    string textfull = Fulltext(filename, name);
+    DoublyLinkedList<string> nums = LDreadfile(filename, name);
+
+    string str;
+    if (nums.size != 0) {
+        if (check == "back") nums.push_back(value);
+        else nums.push_front(value);
+        str = name + ' ';
+        for (int i = 0; i < nums.size; ++i) {
+            str += nums.getvalue(i) + ' ';
+        }
+        textfull += str;
+        writefile(filename, textfull);
+    } else { // создание списка, если его нет
+        str = name + ' ' + value;
+        textfull += str;
+        writefile(filename, textfull);
+    }
+}
+void LDPOP(string& name, string& filename, string check) {
+    string textfull = Fulltext(filename, name);
+    DoublyLinkedList<string> nums = LDreadfile(filename, name);
+
+    string str;
+    if (nums.size != 0) {
+        if (check == "back") nums.pop_back();
+        else nums.pop_front();
+        str = name + ' ';
+        for (int i = 0; i < nums.size; ++i) {
+            str += nums.getvalue(i) + ' ';
+        }
+        textfull += str;
+        writefile(filename, textfull);
+    } else {
+        cout << "Ошибка, нет такого списка или он пуст!" << endl;
+        exit(1);
+    }
+}
+void LDREMOVE(string& name, string& value, string& filename) {
+    string textfull = Fulltext(filename, name);
+    DoublyLinkedList<string> nums = LDreadfile(filename, name);
+
+    string str;
+    if (nums.size != 0) {
+        if (nums.remove(value)) {
+            str = name + ' ';
+            for (int i = 0; i < nums.size; ++i) {
+                str += nums.getvalue(i) + ' ';
+            }
+            textfull += str;
+            writefile(filename, textfull);
+        } else {
+            cout << "Ошибка, такой элемент в списке не найден!" << endl;
+            exit(1);
+        }
+    } else {
+        cout << "Ошибка, нет такого списка или он пуст!" << endl;
+        exit(1);
+    }
+}
+void LDGET(string& name, string& value, string& filename) {
+    DoublyLinkedList<string> nums = LDreadfile(filename, name);
+
+    string str;
+    if (nums.size != 0) {
+        if (nums.getindex(value) == -1) {
+            cout << "Нет такого значения в списке!" << endl;
+            exit(1);
+        }
+        cout << nums.getindex(value) << endl;
+    } else {
+        cout << "Ошибка, нет такого списка!" << endl;
+        exit(1);
+    }
+}
+void LDPRINT(string& name, string& filename) {
+    DoublyLinkedList<string> nums = LDreadfile(filename, name);
+
+    string str;
+    if (nums.size != 0) {
+        nums.print();
+    } else {
+        cout << "Ошибка, нет такого списка или он пуст!" << endl;
+        exit(1);
+    }
+}
+void LDprocessing(string& command, string& filename) { // ф-ия обработки команд списка
+    string name, value;
+
+    if (command.substr(0, 8) == "LDPUSHB ") {
+        stringstream stream(command.substr(8));;
+        stream >> name >> value;
+        LDPUSH(name, value, filename, "back"); 
+    } else if (command.substr(0, 8) == "LDPUSHF ") {
+        stringstream stream(command.substr(8));;
+        stream >> name >> value;
+        LDPUSH(name, value, filename, "front");
+    } else if (command.substr(0, 7) == "LDPOPB ") {
+        stringstream stream(command.substr(7));;
+        stream >> name;
+        LDPOP(name, filename, "back");
+    } else if (command.substr(0, 7) == "LDPOPF ") {
+        stringstream stream(command.substr(7));;
+        stream >> name;
+        LDPOP(name, filename, "front");
+    } else if (command.substr(0, 9) == "LDREMOVE ") {
+        stringstream stream(command.substr(9));;
+        stream >> name >> value;
+        LDREMOVE(name, value, filename);
+    } else if (command.substr(0, 6) == "LDGET ") {
+        stringstream stream(command.substr(6));;
+        stream >> name >> value;
+        LDGET(name, value, filename);
+    } else if (command.substr(0, 8) == "LDPRINT ") {
+        stringstream stream(command.substr(8));;
+        stream >> name;
+        LDPRINT(name, filename);
     } else {
         cout << "Ошибка, нет такой команды!" << endl;
         exit(1); 
@@ -755,15 +898,17 @@ int main(int argc, char* argv[]) {
     int value, index;
     if (query.substr(0, 1) == "M") { // Массив
         Mprocessing(query, filename);
-    } else if (query.substr(0, 1) == "L") { // Список
-        Lprocessing(query, filename);
+    } else if (query.substr(0, 2) == "LS") { // Список
+        LSprocessing(query, filename);
+    } else if (query.substr(0, 2) == "LD") { // Список
+        LDprocessing(query, filename);
     } else if (query.substr(0, 1) == "S") { // Стек
         Sprocessing(query, filename);
-    } else if (query.substr(0, 1) == "Q") {
+    } else if (query.substr(0, 1) == "Q") { // Очередь
         Qprocessing(query, filename);
-    } else if (query.substr(0, 1) == "H") {
+    } else if (query.substr(0, 1) == "H") { // Хеш-таблица
         Hprocessing(query, filename);
-    } else if (query.substr(0, 1) == "T") {
+    } else if (query.substr(0, 1) == "T") { // Дерево
         Tprocessing(query, filename);
     } else {
         cout << "Ошибка, неизвестная принадлежность структуры данных!" << endl;
