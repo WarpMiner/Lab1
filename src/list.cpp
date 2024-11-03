@@ -1,251 +1,58 @@
-#include "../include/list.h"
+#pragma once
+
+#include "includes.h"
 
 template<typename T>
-Node<T>::Node(T value) : data(value), next(nullptr) {}
+struct Node {
+    T data;
+    Node* next;
 
+    Node(T value); // конструктор узла
+};
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList() : head(nullptr) {}
+struct SinglyLinkedList {
+    Node<T>* head;
+    int size = 0;
 
-template<typename T>
-void SinglyLinkedList<T>::print() {
-    Node<T>* current = head;
-    while (current) {
-        cout << current->data << " ";
-        current = current->next;
-    }
-    cout << endl;
-}
+    SinglyLinkedList(); // конструктор листа
+    ~SinglyLinkedList(); // деструктор
 
-template<typename T>
-void SinglyLinkedList<T>::push_front(T value) {
-    Node<T>* newNode = new Node<T>(value);
-    newNode->next = head;
-    head = newNode;
-    size++;
-}
+    void print(); // вывод списка
+    void push_front(T value); // добавление элемента в начало
+    void push_back(T value); // добавление элемента в конец
+    void pop_front(); // удаление элемента с начала
+    void pop_back(); // удаление элемента с конца
+    bool remove(T value); // удаление элемента по значению
+    void replace(int index, T newValue); // ф-ия замены элемента по индексу
+    int getindex(T value); // поиск элемента по значению
+    T getvalue(int index); // поиск элемента по индексу
+};
 
-template<typename T>
-void SinglyLinkedList<T>::push_back(T value) {
-    Node<T>* newNode = new Node<T>(value);
-    if (head == nullptr) {
-        head = newNode;
-    } else {
-        Node<T>* current = head;
-        while (current->next) {
-            current = current->next;
-        }
-        current->next = newNode;
-    }
-    size++;
-}
+template <typename T>
+struct Node2 {
+    T data;
+    Node2* next;
+    Node2* prev;
 
-template<typename T>
-void SinglyLinkedList<T>::pop_front() {
-    if (head == nullptr) return;
-    Node<T>* temp = head;
-    head = head->next;
-    delete temp;
-    size--;
-}
+    Node2(T value); // конструктор узла
+};
+template <typename T>
+struct DoublyLinkedList {
+    Node2<T>* head;
+    Node2<T>* tail;
+    int size = 0;
 
-template<typename T>
-void SinglyLinkedList<T>::pop_back() {
-    if (head == nullptr) return;
-    if (!head->next) { // если только 1 элемент
-        delete head;
-        head = nullptr;
-        return;
-    }
-    Node<T>* current = head;
-    while (current->next && current->next->next) {
-        current = current->next;
-    }
-    delete current->next; // Удаляем последний элемент
-    current->next = nullptr; // Обнуляем указатель
-    size--;
-}
+    DoublyLinkedList(); // конструктор листа
+    ~DoublyLinkedList(); // деструктор
 
-template<typename T>
-bool SinglyLinkedList<T>::remove(T value) {
-    if (!head) return false; // Если список пуст, ничего не удаляем
-    if (head->data == value) { // Если нужно удалить голову списка
-        pop_front();
-        return true;
-    }
-    Node<T>* current = head;
-    Node<T>* previous = nullptr;
-    while (current) {
-        if (current->data == value) {
-            previous->next = current->next; // Пропускаем текущий узел
-            delete current; // Освобождаем память
-            size--;
-            return true; // Успешное удаление
-        }
-        previous = current;
-        current = current->next;
-    }
-    return false; // Если элемент не найден
-}
+    void print(); // вывод списка
+    void push_front(T value); // добавление элемента в начало
+    void push_back(T value); // добавление элемента в конец
+    void pop_front(); // удаление элемента в начале
+    void pop_back(); // удаление элемента в конце
+    bool remove(T value); // удаление элемента по значению
+    int getindex(T value); // поиск элемента по значению
+    T getvalue(int index); // поиск элемента по индексу
+};
 
-template<typename T>
-void SinglyLinkedList<T>::replace(int index, T newValue) {
-    if (index < 0 || index >= size) {
-        cout << "Index out of bounds." << endl;
-        return;
-    }
-
-    Node<T>* current = head;
-    for (int i = 0; i < index; i++) {
-        current = current->next;
-    }
-    current->data = newValue;
-}
-
-template<typename T>
-int SinglyLinkedList<T>::getindex(T value) {
-    Node<T>* current = head;
-    int index = 0;
-    while (current) {
-        if (current->data == value) {
-            return index; // Элемент найден, возвращаем индекс
-        }
-        current = current->next;
-        index++;
-    }
-    return -1; // Если элемент не найден, возвращаем -1
-}
-
-template<typename T>
-T SinglyLinkedList<T>::getvalue(int index) {
-    if (index < 0 || index >= size) {
-        throw out_of_range("Index out of range");
-    }
-
-    Node<T>* current = head;
-    for (int i = 0; i < index; i++) {
-        current = current->next;
-    }
-
-    return current->data;
-}
-
-template<typename T>
-SinglyLinkedList<T>::~SinglyLinkedList() {
-    while (head) {
-        pop_front();
-    }
-}
-
-
-
-template<typename T>
-Node2<T>::Node2(T value) : data(value), next(nullptr), prev(nullptr) {}
-
-template<typename T>
-DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr) {}
-
-template<typename T>
-void DoublyLinkedList<T>::print() { 
-    Node2<T>* current = head;
-    while (current) {
-        cout << current->data << " ";
-        current = current->next;
-    }
-    cout << endl;
-}
-
-template<typename T>
-void DoublyLinkedList<T>::push_front(T value) {
-    Node2<T>* newNode = new Node<T>(value);
-    if (head == nullptr) {
-        head = tail = newNode;
-    } else {
-        newNode->next = head;
-        head->prev = newNode;
-        head = newNode;
-    }
-    size++;
-}
-
-template<typename T>
-void DoublyLinkedList<T>::push_back(T value) {
-    Node2<T>* newNode = new Node<T>(value);
-    if (tail == nullptr) {
-        head = tail = newNode;
-    } else {
-        newNode->prev = tail;
-        tail->next = newNode;
-        tail = newNode;
-    }
-    size++;
-}
-
-template<typename T>
-void DoublyLinkedList<T>::pop_front() {
-    if (head == nullptr) return;
-    Node2<T>* temp = head;
-    head = head->next;
-    if (head != nullptr) {
-        head->prev = nullptr;
-    } else {
-        tail = nullptr; // Список стал пустым
-    }
-    delete temp;
-    size--;
-}
-
-template<typename T>
-void DoublyLinkedList<T>::pop_back() { 
-    if (tail == nullptr) return; // Список пуст
-    Node2<T>* temp = tail;
-    tail = tail->prev;
-    if (tail != nullptr) {
-        tail->next = nullptr;
-    } else {
-        head = nullptr; // Список стал пустым
-    }
-    delete temp;
-    size--;
-}
-
-template<typename T>
-void DoublyLinkedList<T>::remove(T value) {
-    Node2<T>* current = head;
-    while (current) {
-        if (current->data == value) {
-            if (current->prev) {
-                current->prev->next = current->next;
-            } else {
-                head = current->next; // Удаляем голову
-            }
-            if (current->next) {
-                current->next->prev = current->prev;
-            } else {
-                tail = current->prev; // Удаляем хвост
-            }
-            delete current;
-            return; // Выход после удаления первого найденного элемента
-        }
-        current = current->next;
-    }
-    size--;
-}
-
-template<typename T>
-bool DoublyLinkedList<T>::find(T value) {
-    Node2<T>* current = head;
-    while (current) {
-        if (current->data == value) {
-            return true; // Элемент найден
-        }
-        current = current->next;
-    }
-    return false; // Элемент не найден
-}
-
-template<typename T>
-DoublyLinkedList<T>::~DoublyLinkedList() {
-    while (head) {
-        pop_front();
-    }
-}
+#include "../src/list.cpp" // Включаем реализацию шаблона
