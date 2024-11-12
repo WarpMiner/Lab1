@@ -50,8 +50,9 @@ struct DoublyLinkedList {
     void push_back(T value); // добавление элемента в конец
     void pop_front(); // удаление элемента в начале
     void pop_back(); // удаление элемента в конце
-    void remove(T value); // удаление элемента по значению
-    bool find(T value); // поиска элемента по значению
+    bool remove(T value); // удаление элемента по значению
+    int getindex(T value); // поиск элемента по значению
+    T getvalue(int index); // поиск элемента по индексу
 };
 
 #include "../src/list.cpp" // Включаем реализацию шаблона
